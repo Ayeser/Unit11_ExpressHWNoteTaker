@@ -31,6 +31,24 @@ app.get("/api/notes", function(req, res) {
     })
 });
 
+app.delete("/api/notes/:note", function(req, res) {
+    var chosen = req.params.note;
+    console.log(chosen);
+    for (var i=0;i<notes.length; i++) {
+        if (chosen === notes[i].title.replace(/\s+/g, "").toLowerCase()) {
+            notes[i].id = 'erase';
+            const index = notes.findIndex(x => x.id === 'erase');
+            if (index !== -1) {
+                notes.splice(index, 1);
+            }
+            console.log("Note successfully removed");
+            updateNotes();
+            return res.json(notes[i]);
+        }
+    }
+    return res.json("Sorry this note could not be found");
+})
+
 function updateNotes() {
     fs.writeFile('./db/db.json', JSON.stringify(notes), (err) => {
         if (err) throw err;
